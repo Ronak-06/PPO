@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite doesn't support Enums, so we'll use Strings and handle validation in code
+// Roles: "admin", "member"
+// ProjectStatus: "active", "completed"
+// TaskPriority: "High", "Medium", "Low"
+// TaskStatus: "Todo", "In_Progress", "Done"
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          String    @default("member")
+  projects      Project[] @relation("ProjectMembers")
+  createdTasks  Task[]    @relation("TaskCreator")
+  assignedTasks Task[]    @relation("TaskAssignee")
+  createdProjects Project[] @relation("ProjectCreator")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Project {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  deadline    DateTime?
+  status      String    @default("active")
+  members     User[]    @relation("ProjectMembers")
+  createdBy   User      @relation("ProjectCreator", fields: [createdById], references: [id])
+  createdById String
+  tasks       Task[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  priority    String    @default("Medium")
+  status      String    @default("Todo")
+  dueDate     DateTime?
+  assignee    User?     @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  assigneeId  String?
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String
+  createdBy   User      @relation("TaskCreator", fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

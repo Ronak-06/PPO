@@ -1,0 +1,21 @@
+# Dependency directories
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment variables
+.env
+server/.env
+
+# SQLite database
+server/prisma/dev.db
+server/prisma/dev.db-journal
+
+# Build outputs
+dist/
+build/
+client/dist/
+
+# OS metadata
+.DS_Store
+Thumbs.db
