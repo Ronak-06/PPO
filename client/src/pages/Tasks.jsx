@@ -6,13 +6,14 @@ import {
   Filter, 
   Search, 
   MoreVertical, 
-  Sparkles,
+  Plus, 
+  Filter, 
+  Search, 
+  MoreVertical, 
   Clock,
   User,
   Calendar,
-  ChevronDown,
-  BrainCircuit,
-  Loader2
+  ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -26,7 +27,6 @@ const TaskModal = ({ isOpen, onClose, onSave, task = null, projects = [], member
     assignee: '',
     project: ''
   });
-  const [aiLoading, setAiLoading] = useState({ desc: false, priority: false });
 
   useEffect(() => {
     if (task) {
@@ -44,47 +44,6 @@ const TaskModal = ({ isOpen, onClose, onSave, task = null, projects = [], member
     }
   }, [task]);
 
-  const generateAIDescription = async () => {
-    if (!formData.title || !formData.project) {
-      alert('Please provide a title and select a project first.');
-      return;
-    }
-    setAiLoading(prev => ({ ...prev, desc: true }));
-    try {
-      const project = projects.find(p => p._id === formData.project);
-      const res = await api.post('/ai/generate-description', {
-        title: formData.title,
-        projectContext: project?.description || 'General project'
-      });
-      setFormData(prev => ({ ...prev, description: res.data.description }));
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setAiLoading(prev => ({ ...prev, desc: false }));
-    }
-  };
-
-  const suggestAIPriority = async () => {
-    if (!formData.title || !formData.dueDate) {
-      alert('Please provide a title and due date first.');
-      return;
-    }
-    setAiLoading(prev => ({ ...prev, priority: true }));
-    try {
-      const res = await api.post('/ai/suggest-priority', {
-        title: formData.title,
-        deadline: formData.dueDate
-      });
-      const suggested = res.data.priority;
-      if (['High', 'Medium', 'Low'].includes(suggested)) {
-        setFormData(prev => ({ ...prev, priority: suggested }));
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setAiLoading(prev => ({ ...prev, priority: false }));
-    }
-  };
 
   if (!isOpen) return null;
 
@@ -101,26 +60,7 @@ const TaskModal = ({ isOpen, onClose, onSave, task = null, projects = [], member
             <h3 className="text-2xl font-bold text-slate-900">
               {task ? 'Edit Task' : 'Create New Task'}
             </h3>
-            <div className="flex gap-2">
-              <button 
-                type="button"
-                onClick={generateAIDescription}
-                disabled={aiLoading.desc}
-                className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold hover:bg-indigo-100 transition-colors disabled:opacity-50"
-              >
-                {aiLoading.desc ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <BrainCircuit className="w-3.5 h-3.5" />}
-                AI Description
-              </button>
-              <button 
-                type="button"
-                onClick={suggestAIPriority}
-                disabled={aiLoading.priority}
-                className="flex items-center gap-2 px-3 py-1.5 bg-violet-50 text-violet-600 rounded-lg text-xs font-bold hover:bg-violet-100 transition-colors disabled:opacity-50"
-              >
-                {aiLoading.priority ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-                AI Priority
-              </button>
-            </div>
+            </h3>
           </div>
 
           <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); onSave(formData); }}>

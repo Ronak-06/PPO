@@ -1,16 +1,13 @@
 # TaskFlow - Team Task Manager (SQLite + Prisma)
 
-A production-ready project management application built with the SERN stack (SQLite, Express, React, Node) and integrated with Anthropic Claude AI.
+A production-ready project management application built with the SERN stack (SQLite, Express, React, Node).
 
 ## Features
 
 - **Role-Based Access Control (RBAC):** Admin and Member roles with specific permissions.
-- **Project Management:** Create, update, and track project progress.
-- **Task Tracking:** Filterable task table with status and priority management.
-- **AI-Powered Features:**
-  - **Smart Description:** Generate task descriptions from titles and project context using Claude 3.5 Sonnet.
-  - **Priority Suggestion:** Get AI-driven priority levels based on deadlines and task complexity.
-  - **Project Summary:** Generate weekly progress summaries for projects.
+- **Project Tracking:** Create and manage projects with deadlines and status tracking.
+- **Task Management:** Full CRUD for tasks with priority levels, assignees, and real-time status updates.
+- **Member Management:** Role-based access control for Admins and Members.
 - **Premium UI:** Built with React, Tailwind CSS, and Framer Motion for a smooth, modern experience.
 
 ## Tech Stack
@@ -19,7 +16,6 @@ A production-ready project management application built with the SERN stack (SQL
 - **Backend:** Node.js, Express.js
 - **Database:** SQLite (Prisma ORM)
 - **Authentication:** JWT, bcrypt.js
-- **AI Integration:** Anthropic Claude SDK
 
 ## Setup Instructions
 
