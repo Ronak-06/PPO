@@ -101,18 +101,27 @@ A production-ready project management application built with the SERN stack (SQL
 
 ## Deployment (Railway)
 
-1. **Backend:**
-   - Link your GitHub repo to Railway.
-   - Set the root directory to `server`.
-   - Add all environment variables from `.env`.
-   - Railway will automatically detect the `npm start` script.
+### Option 1: Two Separate Services (Recommended)
 
-2. **Frontend:**
+1. **Backend Service:**
+   - Link the repo to a new Railway project.
+   - Set the **Root Directory** to `server`.
+   - Add Environment Variables:
+     - `DATABASE_URL`: Your PostgreSQL/SQLite URL.
+     - `JWT_SECRET`: A long random string.
+     - `ANTHROPIC_API_KEY`: Your Claude API key.
+     - `CLIENT_URL`: The URL of your frontend service (once deployed).
+   - Railway will automatically run `npm run build` (Prisma generate) and `npm start`.
+
+2. **Frontend Service:**
    - Link the repo again as a separate service.
-   - Set the root directory to `client`.
-   - Set the Build Command: `npm run build`.
-   - Set the Start Command (Static site): `npm run preview` or use a specialized static site provider.
-   - Update `VITE_API_URL` to point to your live backend.
+   - Set the **Root Directory** to `client`.
+   - Add Environment Variables:
+     - `VITE_API_URL`: The URL of your backend service (e.g., `https://backend.up.railway.app/api`).
+   - Railway will detect it's a Vite app, run `npm run build`, and serve the `dist` folder.
+
+### Option 2: Unified Deployment
+- You can also deploy the backend and have it serve the frontend `dist` folder as static files. To do this, run `npm run build` in `client`, copy `dist` to `server`, and update `server.js` to use `express.static()`.
 
 ## License
 
