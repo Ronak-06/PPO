@@ -3,22 +3,38 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// SQLite doesn't support Enums, so we'll use Strings and handle validation in code
-// Roles: "admin", "member"
-// ProjectStatus: "active", "completed"
-// TaskPriority: "High", "Medium", "Low"
-// TaskStatus: "Todo", "In_Progress", "Done"
+enum Role {
+  admin
+  member
+}
+
+enum ProjectStatus {
+  active
+  completed
+}
+
+enum TaskPriority {
+  High
+  Medium
+  Low
+}
+
+enum TaskStatus {
+  Todo
+  In_Progress
+  Done
+}
 
 model User {
   id            String    @id @default(uuid())
   name          String
   email         String    @unique
   password      String
-  role          String    @default("member")
+  role          Role      @default(member)
   projects      Project[] @relation("ProjectMembers")
   createdTasks  Task[]    @relation("TaskCreator")
   assignedTasks Task[]    @relation("TaskAssignee")
@@ -32,7 +48,7 @@ model Project {
   name        String
   description String?
   deadline    DateTime?
-  status      String    @default("active")
+  status      ProjectStatus @default(active)
   members     User[]    @relation("ProjectMembers")
   createdBy   User      @relation("ProjectCreator", fields: [createdById], references: [id])
   createdById String
@@ -45,8 +61,8 @@ model Task {
   id          String    @id @default(uuid())
   title       String
   description String?
-  priority    String    @default("Medium")
-  status      String    @default("Todo")
+  priority    TaskPriority @default(Medium)
+  status      TaskStatus   @default(Todo)
   dueDate     DateTime?
   assignee    User?     @relation("TaskAssignee", fields: [assigneeId], references: [id])
   assigneeId  String?
