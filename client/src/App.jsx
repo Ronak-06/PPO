@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -11,7 +12,14 @@ import Layout from './components/Layout';
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading, isAdmin } = useAuth();
 
-  if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
+  if (loading) return (
+    <div className="gradient-bg h-screen flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-10 h-10 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-green-400/60 text-sm">Loading...</p>
+      </div>
+    </div>
+  );
   if (!user) return <Navigate to="/login" />;
   if (adminOnly && !isAdmin) return <Navigate to="/dashboard" />;
 
@@ -21,15 +29,16 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       
-      <Route path="/" element={
+      <Route path="/app" element={
         <ProtectedRoute>
           <Layout />
         </ProtectedRoute>
       }>
-        <Route index element={<Navigate to="/dashboard" />} />
+        <Route index element={<Navigate to="/app/dashboard" />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="projects" element={<Projects />} />
         <Route path="tasks" element={<Tasks />} />
@@ -39,6 +48,12 @@ function App() {
           </ProtectedRoute>
         } />
       </Route>
+
+      {/* Legacy routes redirect */}
+      <Route path="/dashboard" element={<Navigate to="/app/dashboard" />} />
+      <Route path="/projects" element={<Navigate to="/app/projects" />} />
+      <Route path="/tasks" element={<Navigate to="/app/tasks" />} />
+      <Route path="/members" element={<Navigate to="/app/members" />} />
     </Routes>
   );
 }

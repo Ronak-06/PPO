@@ -1,118 +1,115 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
-  LayoutDashboard, 
-  Briefcase, 
-  CheckSquare, 
-  Users, 
-  LogOut, 
-  Bell,
-  Search,
-  Plus
+  LayoutDashboard, Briefcase, CheckSquare, Users,
+  LogOut, Bell, Search, ChevronRight
 } from 'lucide-react';
 
-const Navbar = () => {
+const Sidebar = () => {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const handleLogout = () => { logout(); navigate('/login'); };
 
   const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Projects', path: '/projects', icon: Briefcase },
-    { name: 'Tasks', path: '/tasks', icon: CheckSquare },
+    { name: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard },
+    { name: 'Projects', path: '/app/projects', icon: Briefcase },
+    { name: 'Tasks', path: '/app/tasks', icon: CheckSquare },
   ];
-
-  if (isAdmin) {
-    navItems.push({ name: 'Members', path: '/members', icon: Users });
-  }
+  if (isAdmin) navItems.push({ name: 'Members', path: '/app/members', icon: Users });
 
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 h-screen fixed left-0 top-0 flex flex-col">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-primary-600 flex items-center gap-2">
-          <CheckSquare className="w-8 h-8" />
-          TaskFlow
-        </h1>
+    <aside className="w-60 h-screen fixed left-0 top-0 flex flex-col z-20"
+      style={{ background: 'rgba(5,12,5,0.98)', borderRight: '1px solid rgba(34,197,94,0.1)' }}>
+
+      {/* Logo */}
+      <div className="px-6 py-6 flex items-center gap-2.5">
+        <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+          <CheckSquare className="w-5 h-5 text-black" />
+        </div>
+        <span className="text-lg font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>TaskFlow</span>
       </div>
 
-      <nav className="flex-1 px-4 space-y-1">
+      <div className="px-3 mb-2">
+        <p className="text-[10px] font-bold tracking-widest uppercase text-green-900 px-3 mb-2">Navigation</p>
+      </div>
+
+      {/* Nav */}
+      <nav className="flex-1 px-3 space-y-1">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive 
-                  ? 'bg-primary-50 text-primary-600 font-semibold' 
-                  : 'text-slate-600 hover:bg-slate-50'
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group ${
+                isActive
+                  ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                  : 'text-green-300/40 hover:text-green-300 hover:bg-green-900/20'
               }`
             }
           >
-            <item.icon className="w-5 h-5" />
-            {item.name}
+            <item.icon className="w-4.5 h-4.5 flex-shrink-0" style={{width:'18px', height:'18px'}} />
+            <span>{item.name}</span>
           </NavLink>
         ))}
       </nav>
 
-      <div className="p-4 border-t border-slate-200">
-        <div className="flex items-center gap-3 mb-4 px-2">
-          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold">
+      {/* User */}
+      <div className="p-3 border-t border-green-900/30">
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg mb-1"
+          style={{ background: 'rgba(34,197,94,0.05)' }}>
+          <div className="w-8 h-8 rounded-lg bg-green-500/20 border border-green-500/30 flex items-center justify-center font-bold text-green-400 text-sm flex-shrink-0">
             {user?.name?.[0].toUpperCase()}
           </div>
-          <div className="overflow-hidden">
-            <p className="text-sm font-semibold text-slate-900 truncate">{user?.name}</p>
-            <p className="text-xs text-slate-500 capitalize">{user?.role}</p>
+          <div className="overflow-hidden flex-1 min-w-0">
+            <p className="text-sm font-semibold text-white truncate">{user?.name}</p>
+            <p className="text-xs text-green-400/40 capitalize">{user?.role}</p>
           </div>
         </div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-green-300/40 hover:text-red-400 hover:bg-red-900/10 transition-all duration-200"
         >
-          <LogOut className="w-5 h-5" />
-          Logout
+          <LogOut style={{width:'16px', height:'16px'}} />
+          Sign Out
         </button>
       </div>
     </aside>
   );
 };
 
-const Header = () => {
-  return (
-    <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-10 px-8 flex items-center justify-between">
-      <div className="flex items-center gap-4 bg-slate-100 px-4 py-2 rounded-full w-96">
-        <Search className="w-4 h-4 text-slate-400" />
-        <input 
-          type="text" 
-          placeholder="Search tasks, projects..." 
-          className="bg-transparent border-none focus:outline-none text-sm w-full"
-        />
-      </div>
-      <div className="flex items-center gap-4">
-        <button className="p-2 text-slate-400 hover:text-slate-600 relative">
-          <Bell className="w-6 h-6" />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-        </button>
-      </div>
-    </header>
-  );
-};
-
-const Layout = () => {
-  return (
-    <div className="min-h-screen bg-slate-50">
-      <Navbar />
-      <div className="pl-64">
-        <Header />
-        <main className="p-8">
-          <Outlet />
-        </main>
-      </div>
+const Header = () => (
+  <header
+    className="h-14 sticky top-0 z-10 px-6 flex items-center justify-between"
+    style={{ background: 'rgba(5,10,5,0.9)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(34,197,94,0.08)' }}
+  >
+    <div className="flex items-center gap-3 rounded-lg px-3 py-1.5 w-80"
+      style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.1)' }}>
+      <Search style={{width:'14px', height:'14px', color:'rgba(34,197,94,0.4)'}} />
+      <input
+        type="text"
+        placeholder="Search..."
+        className="bg-transparent border-none outline-none text-sm w-full"
+        style={{ color: 'rgba(240,253,244,0.6)' }}
+      />
     </div>
-  );
-};
+    <button className="relative p-2 rounded-lg transition-colors hover:bg-green-900/20">
+      <Bell style={{width:'18px', height:'18px', color:'rgba(34,197,94,0.5)'}} />
+      <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-green-500 rounded-full" />
+    </button>
+  </header>
+);
+
+const Layout = () => (
+  <div className="gradient-bg min-h-screen">
+    <Sidebar />
+    <div className="pl-60">
+      <Header />
+      <main className="p-6">
+        <Outlet />
+      </main>
+    </div>
+  </div>
+);
 
 export default Layout;
